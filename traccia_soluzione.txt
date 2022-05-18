@@ -1,0 +1,63 @@
+INPUT:
+- Insieme degli esami (ESAMI) ---> sono nel db. {e1, e2, ..., en}
+- m = grandezza del sottoinsieme, numero di crediti
+
+OUTPUT:
+- Sottoinsieme di ESAMI, tale che:
+	* Somma ESAMI.crediti == m
+	* Media ESAMI.voto sia massima
+
+APPROCCIO 1 (il più "stupido"): facile da immaginare, ma per sottoinsiemi grandi 
+								non arrivo a soluzione ragionevole (esplora troppi casi)
+Ad ogni passo della ricorsione, devo decidere quale esame devo mettere con le soluzioni parziali: 
+uno per volta li metto, li tolgo e provo tutte le possibili soluzione
+	---> ad ogni livello l inserisco un esame in PARZIALE. Quale? Li provo tutti.
+	
+SOLUZIONE PARZIALE = ad ogni livello l, PARZIALE sarà un sottoinsieme di l esami.
+	
+GENERAZIONE SOTTOPROBLEMI: aggiungo un nuovo esame a PARZIALE tra quelli non ancora aggiunti
+	---> PARZIALE = PARZIALE + ESAMI(I)
+
+l = 0 ---> N scelte possibili
+	PARZIALE = {e1}
+		L = 1
+			PARZIALE = {e1, e2}
+				continuo con questo ramo fino alla fine, poi backtracking e vado ad esplorare le altre soluzioni
+		L = 1
+			PARZIALE = {e1, e3}
+				[...]
+	PARZIALE = {e2}
+		L = 1
+			PARZIALE = {e2, e1}
+				[...]
+	[...]
+	PARZIALE = {en}
+Problema: le soluzioni si ripetono, mettendo gli esami semplicemente in ordine diverso ---> esploro soluzioni inutili
+
+CASI TERMINALI dell'approccio 1:   
+1) L = N
+2) PARZIALE.sommaCrediti() == m
+	-> potrebbe essere una soluzione, controllo se è la soluzione migliore, calcolando la media voto: return;
+   ELSE IF PARZIALE.sommaCrediti() > m
+    -> non può essere una soluzione, esco dlla ricorsione: return;
+
+APPROCCIO 2 ("più furbo"): complessità 2^N
+
+Generare i sottoproblemi uno per volta, scorrendo l'insieme di esami di partenza in ordine, decidendo per ogni esame:
+* se debba essere inserito
+* se non debba essere inserito
+	
+IL LIIVELLO DELLA RICORSIONE == ESAME DA CONSIDERARE
+
+	L = 0 -> 2 scelte possibili
+		PARZIALE = {e1}
+			L = 1
+				PARZIALE = {e1,e2}
+				PARZIALE = {e1}
+					[...]
+			oppure
+		PARZIALE = {}
+			L = 1
+				PARZIALE = {e2}
+				PARZIALE = {}	
+	
